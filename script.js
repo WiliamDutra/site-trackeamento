@@ -1,4 +1,89 @@
+// ==========================================
+// TRACKING SCRIPT & ANALYTICS API
+// ==========================================
+
+// Parse URL Parameters (fbclid, ttclid, gclid)
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const userData = {};
+    
+    const fbclid = params.get('fbclid');
+    const ttclid = params.get('ttclid');
+    const gclid = params.get('gclid');
+    
+    if (fbclid) userData.fbclid = fbclid;
+    if (ttclid) userData.ttclid = ttclid;
+    if (gclid) userData.gclid = gclid;
+    
+    return userData;
+}
+
+// Fire & Forget HTTP POST Event Tracker
+function trackEvent(eventName, eventUserData = {}) {
+    let eventId;
+    try {
+        eventId = crypto.randomUUID();
+    } catch (e) {
+        eventId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    const urlParams = getUrlParams();
+    const mergedUserData = { ...urlParams, ...eventUserData };
+
+    const body = {
+        event_id: eventId,
+        event_name: eventName,
+        user_data: mergedUserData,
+        custom_data: {}
+    };
+
+    fetch('https://track.companynervonine.online/events', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(body)
+    }).catch(err => {
+        // Fire and forget - silent catch so it doesn't interrupt visitors
+        console.warn('Tracking fail:', err);
+    });
+}
+
+// YouTube Player Iframe API Integration
+let player;
+let videoPlayTracked = false;
+
+// Load the Iframe Player API code asynchronously.
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+window.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('youtube-player', {
+        events: {
+            'onStateChange': onPlayerStateChange
+        }
+    });
+};
+
+function onPlayerStateChange(event) {
+    // 1 represents PLAYING in YouTube Player API
+    if (event.data === 1 && !videoPlayTracked) {
+        trackEvent('VideoPlay');
+        videoPlayTracked = true;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Fire PageView event on load
+    trackEvent('PageView');
+
     // DOM Elements
     const leadForm = document.getElementById('lead-form');
     const nameInput = document.getElementById('name');
@@ -131,6 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Save lead
         saveLead({ name, email, whatsapp, date });
+
+        // Track Lead Event
+        trackEvent('Lead', {
+            nome: name,
+            email: email,
+            telefone: whatsapp
+        });
 
         // Update success message UI
         resultName.textContent = name;
