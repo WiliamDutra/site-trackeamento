@@ -2,8 +2,14 @@
 // TRACKING SCRIPT & ANALYTICS API
 // ==========================================
 
-// Parse URL Parameters (fbclid, ttclid, gclid)
-function getUrlParams() {
+// Helper function to read cookie by name
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
+
+// Parse URL Parameters (fbclid, ttclid, gclid) and Cookies (fbc, fbp)
+function getTrackingUserData() {
     const params = new URLSearchParams(window.location.search);
     const userData = {};
     
@@ -14,6 +20,21 @@ function getUrlParams() {
     if (fbclid) userData.fbclid = fbclid;
     if (ttclid) userData.ttclid = ttclid;
     if (gclid) userData.gclid = gclid;
+
+    // Capture _fbp cookie
+    const fbp = getCookie('_fbp');
+    if (fbp) {
+        userData.fbp = fbp;
+    }
+
+    // Capture _fbc cookie or construct manually if fbclid exists
+    const fbcCookie = getCookie('_fbc');
+    if (fbcCookie) {
+        userData.fbc = fbcCookie;
+    } else if (fbclid) {
+        const timestamp = Date.now();
+        userData.fbc = `fb.1.${timestamp}.${fbclid}`;
+    }
     
     return userData;
 }
@@ -31,8 +52,8 @@ function trackEvent(eventName, eventUserData = {}) {
         });
     }
 
-    const urlParams = getUrlParams();
-    const mergedUserData = { ...urlParams, ...eventUserData };
+    const trackingData = getTrackingUserData();
+    const mergedUserData = { ...trackingData, ...eventUserData };
 
     const body = {
         event_id: eventId,
