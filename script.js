@@ -40,7 +40,7 @@ function getTrackingUserData() {
 }
 
 // Fire & Forget HTTP POST Event Tracker
-function trackEvent(eventName, eventUserData = {}) {
+function trackEvent(eventName, eventUserData = {}, eventCustomData = {}) {
     let eventId;
     try {
         eventId = crypto.randomUUID();
@@ -59,7 +59,7 @@ function trackEvent(eventName, eventUserData = {}) {
         event_id: eventId,
         event_name: eventName,
         user_data: mergedUserData,
-        custom_data: {}
+        custom_data: eventCustomData
     };
 
     fetch('https://track.companynervonine.online/events', {
@@ -255,6 +255,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset form controls
         leadForm.reset();
+    });
+
+    // CTA Button Click Tracker
+    const ctaButtons = document.querySelectorAll('.submit-btn, .cta-btn');
+    ctaButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const buttonText = btn.textContent.trim();
+            trackEvent('ButtonClick', {}, { button_name: buttonText });
+        });
     });
 
     // Reset button (allows registering another lead)
