@@ -1,17 +1,4 @@
-const DEPOIMENTOS = [
-  {
-    nome: "[Nome do paciente 1]",
-    texto: "[DEPOIMENTO 1 — resultado real com a glicemia após o programa]",
-  },
-  {
-    nome: "[Nome do paciente 2]",
-    texto: "[DEPOIMENTO 2 — como foi o processo de acompanhamento]",
-  },
-  {
-    nome: "[Nome do paciente 3]",
-    texto: "[DEPOIMENTO 3 — o que mudou na rotina do dia a dia]",
-  },
-];
+const PLACEHOLDERS = [1, 2, 3];
 
 export default function Depoimentos() {
   return (
@@ -20,18 +7,26 @@ export default function Depoimentos() {
         <h2 className="font-display font-700 text-3xl sm:text-4xl text-neutral-900 leading-[1.15] text-center">
           Quem já passou por isso
         </h2>
+        <p className="mt-3 text-center text-neutral-500 text-sm font-body">
+          Depoimentos reais de pacientes entram aqui assim que forem enviados.
+        </p>
 
         <div className="mt-12 grid sm:grid-cols-3 gap-5 sm:gap-6">
-          {DEPOIMENTOS.map((depoimento) => (
-            <div key={depoimento.nome} className="rounded-lg bg-gold-light p-6 flex flex-col gap-4">
-              <span aria-hidden className="text-gold text-sm tracking-wide">
+          {PLACEHOLDERS.map((n) => (
+            <div
+              key={n}
+              className="rounded-lg bg-gold-light/40 border border-dashed border-gold/40 p-6 flex flex-col gap-3"
+            >
+              <span aria-hidden className="text-gold/50 text-sm tracking-wide">
                 ★★★★★
               </span>
-              <p className="italic text-neutral-800 font-body text-sm sm:text-base">
-                &ldquo;{depoimento.texto}&rdquo;
-              </p>
-              <span className="mt-auto text-sm font-heading font-600 text-neutral-900">
-                {depoimento.nome}
+              <div className="space-y-2">
+                <div className="h-3 rounded-full bg-neutral-200/70 w-full" />
+                <div className="h-3 rounded-full bg-neutral-200/70 w-5/6" />
+                <div className="h-3 rounded-full bg-neutral-200/70 w-2/3" />
+              </div>
+              <span className="mt-auto text-xs font-heading font-600 text-neutral-500">
+                Depoimento {n} em breve
               </span>
             </div>
           ))}

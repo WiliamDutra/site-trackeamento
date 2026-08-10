@@ -10,8 +10,19 @@ export default function SobreDrMarcos() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="grid sm:grid-cols-5 gap-10 items-center">
           <div className="sm:col-span-2">
-            <div className="aspect-square w-full max-w-xs mx-auto rounded-2xl bg-background-alt border border-neutral-200 flex items-center justify-center text-neutral-500 text-sm font-body text-center p-4">
-              [FOTO DO DR. MARCOS]
+            <div className="aspect-square w-full max-w-xs mx-auto rounded-2xl bg-background-alt border border-neutral-200 flex flex-col items-center justify-center gap-3 text-neutral-500 text-xs font-body text-center p-4">
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="h-16 w-16 text-neutral-400"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+              </svg>
+              Foto do Dr. Marcos em breve
             </div>
           </div>
 
